@@ -20,7 +20,7 @@ A Bitcoin Pod is a smart contract  that enables secure custody of Bitcoin th
 
 Before creating a Pod, you need to create a Bitcoin multisig address with your chosen operator. you can use the operator’s open API to generate the multisig address. Please remember that the operator  returns a BTC address and a hex representation of address bytes excluding the bech32 prefix. Please use the hex representation to register on the POD contractor as solidity does not support bech32 scheme.
 
-```
+```js
 const response = await fetch('/eigen/get_address', {
     method: 'POST',
     body: JSON.stringify({
@@ -50,7 +50,7 @@ it returns the below JSON.
 
 To Create a POD user needs to sent a message to PodManager’s createPod function. Once the CreatePod transaction is sent and executed successfully, Pod Manager will emit a Pod Created event. User can subscribe to event if need be.
 
-```
+```js
 const podManagerABI = [...]; // BitcoinPodManager ABI
 const podManagerAddress = "0x..."; // BitcoinPodManager contract address
 
@@ -80,7 +80,7 @@ After the Pod is created user need to send btc to the multisig address. Please e
 
 After submitting the funds user need to send a verify BTC deposit message containing the BTC transaction ID, the amount of BTC sent and the POD address. Once this transaction is successful, operator will pick it up from there. Operator will verify the transaction and the amount and Call Confirm Deposit.
 
-```
+```js
 async function prepareDepositVerification() {
     // Transaction parameters
     const params = {
@@ -145,7 +145,7 @@ Important considerations:
 
 Once the pre requisites are met. user can create a Withdraw request by sending a withdrawBitcoinPSBTRequest to the PODManager.
 
-```tsx
+```js
     it("Should create PSBT withdrawal request", async function() {
         // Create withdrawal address
         const withdrawAddress = ethers.utils.hexlify(
@@ -179,7 +179,7 @@ The operator will pick up the new withdraw request event and start the withdraw 
 
 User Can retrieve the Signed PSBT from the Pod Manager using the getSignedBitcoinWithdrawTransaction Func.
 
-```
+```js
 describe("Bitcoin Withdrawal Transaction", function() {
     let pod: BitcoinPod;
     let manager: SignerWithAddress;
@@ -210,7 +210,7 @@ Operator watches the tx ID on btc and once the transaction is confirmed, it will
 
 user can also use below code. snippet to check the pod balance
 
-```
+```js
 describe("BitcoinPod Balance", function() {
     let pod: BitcoinPod;
     
