@@ -25,7 +25,7 @@ const response = await fetch('/eigen/get_address', {
     method: 'POST',
     body: JSON.stringify({
         pubKey: "your_bitcoin_public_key",
-        ethAddr: "your_ethereum_address"
+        podEthAddr: "your_ethereum_address"
     })
 });
 const multisigAddress = await response.json();
