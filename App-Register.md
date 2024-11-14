@@ -8,6 +8,16 @@ This example demonstrates how to build a simple CDP (Collateralized Debt Positio
 
 ## Setup
 
+To install the dependencies, follow below link to install foundry:
+
+https://book.getfoundry.sh/getting-started/installation
+
+and then run 
+
+```bash
+forge build
+```
+
 ### 1. Deploy Oracle
 
 The oracle system supports two types of price feeds:
