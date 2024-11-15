@@ -2,18 +2,13 @@
 
 This guide contains the instructions to register a deployed application with BitDSM. 
 
+[Sample Registration Script](https://github.com/BitDSM/BitDSM-examples/blob/main/script/timelock/RegisterApp.s.sol)
+
 ## Setup
 
 The code snippets below are created using Foundry framework. To install the dependencies, follow below link to install foundry:
 
 https://book.getfoundry.sh/getting-started/installation
-
-and then run 
-
-```bash
-forge build
-```
-to compile the code. 
 
 ### 1. Register App
 
@@ -22,7 +17,7 @@ To register your application, you'll need to call the `registerApp` function pro
 #### Parameters:
 - `appAddress`: The contract address of your application
 - `signature` : The signature over the DigestHash
-- `salt` : randomeness for signature   
+- `salt` : randomness for signature   
 - `expiry` :  Time for signature is valid
 
 To register your app, you need the address to `APPRegistry` contract and your App's (e.g., CDP) contract address
