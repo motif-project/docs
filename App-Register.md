@@ -61,13 +61,14 @@ To register your app, you need the address to `APPRegistry` contract and your Ap
 
 Then create a random salt and expiry
 ```solidity
-    bytes32 salt = bytes32(uint256(1));
-uint256 expiry = block.timestamp + 1 days;
+        bytes32 salt = bytes32(uint256(1));
+        uint256 expiry = block.timestamp + 1 days;
 ```
 
 Calculate the digest hash for the app registration by calling the `calculateAppRegistrationDigestHash` function from the `AppRegistry` contract. Sign the digest hash and the broadcast the transaction.
 
-```solidity vm.startBroadcast(deployerPrivateKey);
+```
+        solidity vm.startBroadcast(deployerPrivateKey);
 
         try
             AppRegistry(_APP_REGISTRY).calculateAppRegistrationDigestHash(
@@ -100,20 +101,21 @@ First you need upload the metadata.json file to IPFS and get the URI. The format
 
 Metadata JSON file example:
 ```json
-{"name": " ",
-  "website": " ",
-  "description": " "
-}
+    {
+          "name": "App Name",
+          "website": "www.example.com",
+          "description": "This is a simple example app demostrating the locking and unlocking functionality of BidcoinPodManager"
+    }
 ```
 
 then you can update the metadata URI by calling the `updateAppMetadataURI` function from the `AppRegistry` contract.
 
 ```solidity
-    app = CDP(_APP_ADDRESS);
-        app.updateAppMetadataURI(
-            "https://your_json_uri.json",
-            _APP_REGISTRY
-        );
+        app = CDP(_APP_ADDRESS);
+                app.updateAppMetadataURI(
+                    "https://your_json_uri.json",
+                    _APP_REGISTRY
+                );
 ```
 
 
@@ -126,5 +128,5 @@ To deregister your app, you need to call the `deregisterApp` function from the `
 - `AppRegistry`: The address of the BitDSMRegistry contract
 
 ```solidity
-    AppRegistry(_APP_REGISTRY).deregisterApp(_APP_ADDRESS);
+        AppRegistry(_APP_REGISTRY).deregisterApp(_APP_ADDRESS);
 ```
