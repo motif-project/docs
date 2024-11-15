@@ -93,7 +93,17 @@ Calculate the digest hash for the app registration by calling the `calculateAppR
             );
 ```
 
-### 4. Update App Metadata
+### 4. Override isValidSignature
+To successfully complete the application registration process, it is mandatory to implement the isValidSignature function from the IERC1271 interface in your App contract. The AppRegistry contract uses this implementation to validate signatures according to the custom logic defined in the App.
+```solidity
+
+        function isValidSignature(
+                bytes32 _hash,
+                bytes memory _signature
+            ) external view override returns (bool)
+```
+
+### 5. Update App Metadata
 
 Once the app is registered, you can update the app's metadata URI by calling the `updateAppMetadataURI` function from the `AppRegistry` contract. It is mandatory for the Metadata to be displayed on the BitDSM dashboard on Holesky Testnet.
 
@@ -119,7 +129,7 @@ then you can update the metadata URI by calling the `updateAppMetadataURI` funct
 ```
 
 
-### 5. Deregister App
+### 6. Deregister App
 
 To deregister your app, you need to call the `deregisterApp` function from the `AppRegistry` contract.
 
