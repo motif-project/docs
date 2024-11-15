@@ -12,7 +12,7 @@ A Bitcoin Pod is a smart contract  that enables secure custody of Bitcoin th
 2. A registered operator's address from BitDSM Registry.
 3. A Bitcoin multisig address created with the operator
 4. The BitcoinPodManager contract address.
-5. Addresses for all deployed contract are [here](https://github.com/BitDSM/BitDSM/tree/implement-v1-ecdsa?tab=readme-ov-file#existing-holesky-testnet-deployment).
+5. Addresses for all deployed contract are [here](https://github.com/BitDSM/BitDSM?tab=readme-ov-file#existing-holesky-testnet-deployment).
 
 ## **Step-by-Step Guide**
 
