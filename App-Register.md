@@ -1,8 +1,8 @@
-# Register your App with BitDSM
+# Register your App with Motif   
 
-This guide contains the instructions to register a deployed application with BitDSM. 
+This guide contains the instructions to register a deployed application with Motif. 
 
-[Sample Registration Script](https://github.com/BitDSM/BitDSM-examples/blob/main/script/timelock/RegisterApp.s.sol)
+[Sample Registration Script](https://github.com/MotifFinance/motif-app-examples/blob/main/script/timelock/RegisterApp.s.sol)
 
 ## Setup
 
