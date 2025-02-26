@@ -1,24 +1,26 @@
-# Step By Step Guide To Create A POD & Deposit/Withdraw From BitDSM
-
-Created By: Ahmad
-Stakeholders: penny 🐧
-Last Edited By: Ahmad
+# Guide to Creating a Bitcoin Pod and Managing Bitcoin Deposits and Withdrawals
 
 A Bitcoin Pod is a smart contract  that enables secure custody of Bitcoin through a 2-of-2 multisig setup between a user and an operator. This guide explains how to create and interact with a new Pod.
 
 ## **Prerequisites**
 
 1. An Ethereum wallet with some ETH for gas.
-2. A registered operator's address from BitDSM Registry.
+2. A registered operator's address from Motif Stake Registry.
 3. A Bitcoin multisig address created with the operator
 4. The BitcoinPodManager contract address.
 5. Addresses for all deployed contract are [here](https://github.com/BitDSM/BitDSM?tab=readme-ov-file#existing-holesky-testnet-deployment).
 
 ## **Step-by-Step Guide**
 
-### **1. Create the Bitcoin Multisig Address**
+### **1. Creating a Bitcoin Multisig Address**
 
-Before creating a Pod, you need to create a Bitcoin multisig address with your chosen operator. you can use the operator’s open API to generate the multisig address. Please remember that the operator  returns a BTC address and a hex representation of address bytes excluding the bech32 prefix. Please use the hex representation to register on the POD contractor as solidity does not support bech32 scheme.
+To create a Bitcoin Pod, the first step is to generate a Bitcoin multisig address in collaboration with your selected operator. You can use the operator’s open API to create this address.
+
+The API will return two key pieces of information:
+	- BTC Address: The standard Bitcoin address.
+	- Hex Representation of Address Bytes: The raw byte format of the address, excluding the Bech32 prefix.
+
+When registering the Bitcoin Pod on the smart contract, ensure you use the `hex representation` of the address, as `Solidity` does not support the `Bech32` format.
 
 ```js
 const response = await fetch('/eigen/get_address', {
@@ -31,7 +33,7 @@ const response = await fetch('/eigen/get_address', {
 const multisigAddress = await response.json();
 ```
 
-it returns the below JSON.
+it returns the following JSON.
 
 ```json
 	{
@@ -40,16 +42,16 @@ it returns the below JSON.
 	}
 ```
 
-### **2. Create POD**
+---
 
-**Important Considerations**
+### **2. Creating Bitcoin Pod**
 
-- Each Ethereum address can only create one pod.
-- Pod ownership cannot be transferred.
-- The pod creator becomes the pod owner.
+**Key Considerations:**  
+- Each Ethereum address can create only **one** Pod.  
+- Pod ownership is **non-transferable**.  
+- The **Pod creator** is automatically assigned as the **Pod owner**.  
 
-To Create a POD user needs to sent a message to PodManager’s createPod function. Once the CreatePod transaction is sent and executed successfully, Pod Manager will emit a Pod Created event. User can subscribe to event if need be.
-
+To create a Pod, the user must call the `createPod` function of the **PodManager** contract. Once the `createPod` transaction is successfully executed, the **PodManager** will emit a **PodCreated** event. Users can subscribe to this event if they wish to track Pod creation in real-time.  
 ```js
 const podManagerABI = [...]; // BitcoinPodManager ABI
 const podManagerAddress = "0x..."; // BitcoinPodManager contract address
@@ -73,12 +75,23 @@ const tx = await podManager.methods.createPod(
 // Get pod address from event
 const podAddress = tx.events.PodCreated.returnValues.pod;
 ```
+---
 
-After the Pod is created user need to send btc to the multisig address. Please ensure that all the funds are sent via one single transaction. If the user use multiple transactions funds will be lost.
+### **3. Depositing BTC into the Pod**
 
-### 3. **Send Verify BTC Deposit Request**
+Once the Pod is created, the user must deposit BTC to the **multisig address**.  
+**Important:** Ensure that all funds are sent in **one single transaction**. If multiple transactions are used, the funds may be **lost**.
 
-After submitting the funds user need to send a verify BTC deposit message containing the BTC transaction ID, the amount of BTC sent and the POD address. Once this transaction is successful, operator will pick it up from there. Operator will verify the transaction and the amount and Call Confirm Deposit.
+---
+
+### **4. Verify BTC Deposit**
+
+After sending the BTC, the user must submit a **VerifyBTCDeposit** request. This request includes:  
+- The **BTC transaction ID**  
+- The **amount of BTC sent**  
+- The **Pod address**  
+
+Once this transaction is successfully submitted in a Bitcoin block, the **operator** will verify the deposit and call **ConfirmDeposit** function.
 
 ```js
 async function prepareDepositVerification() {
@@ -132,18 +145,18 @@ async function requestDepositVerification() {
 }
 
 ```
+---
 
-### 3. **Create WithDraw Request:**
+### **5. Creating a Withdrawal Request**
 
-Important considerations:
+**Key Considerations:**  
+- Ensure the **Pod is not delegated** (i.e., no active stakes with an app).  
+- Provide a **valid BTC address**—this must be the **hex-encoded address bytes** without the **Bech32 prefix**.  
+- Withdrawals will always transfer the **entire balance** from the Pod.  
+- Users must have the means to **sign and broadcast a Bitcoin PSBT**.  
+- Only the **Pod Owner** can initiate a withdrawal.  
 
-- Make sure the the Pod is  not delegated. ensuring that there are nothing staked with an app
-- A valid btc address is needed. again as mentioned above this has to be hex encoding of btc address bytes without the Bech32 prefix.
-- it will always withdraw the complete amount deposited into the POD.
-- User should have means to sign and broadcast Bitcoin PSBT.
-- Only the Pod Owner can initiate this request
-
-Once the pre requisites are met. user can create a Withdraw request by sending a withdrawBitcoinPSBTRequest to the PODManager.
+To create a withdrawal request, the user must send a **withdrawBitcoinPSBTRequest** to the **PodManager**.  
 
 ```js
     it("Should create PSBT withdrawal request", async function() {
@@ -173,11 +186,13 @@ Once the pre requisites are met. user can create a Withdraw request by sending a
     });
 ```
 
-The operator will pick up the new withdraw request event and start the withdraw process. it will create a PSBT moving the funds to the provided withdraw address, Sign his part of the multisig and send the PSBT to the PodManager.
+The **operator** will detect the new withdrawal request, generate a **PSBT** (Partially Signed Bitcoin Transaction) moving the funds to the withdrawal address, sign their part of the multisig, and send the signed PSBT to the **PodManager**.
 
-### 4. Retrieve Operator Signed PSBT
+---
 
-User Can retrieve the Signed PSBT from the Pod Manager using the getSignedBitcoinWithdrawTransaction Func.
+### **6. Retrieve the Operator-Signed PSBT**
+
+Users can retrieve the **Signed PSBT** by calling the **getSignedBitcoinWithdrawTransaction** function from the **PodManager**.  
 
 ```js
 describe("Bitcoin Withdrawal Transaction", function() {
@@ -205,10 +220,17 @@ describe("Bitcoin Withdrawal Transaction", function() {
 });
 ```
 
-Once User gets the PSBT. They should Sign it using their wallet and broadcast it on the btc chain.
-Operator watches the tx ID on btc and once the transaction is confirmed, it will send the confirm withdrawal message to the Pod manager (closing the Pod)
+Once the user obtains the PSBT:  
+1. **Sign** it using their wallet.  
+2. **Broadcast** the signed transaction to the Bitcoin network.  
 
-user can also use below code. snippet to check the pod balance
+The operator will monitor the Bitcoin blockchain for the transaction confirmation. Once confirmed, the operator will send a **Confirm Withdrawal** message to the **PodManager**, officially **closing the Pod**.
+
+---
+
+### **Checking Pod Balance**
+
+Users can also check their Pod's balance using the following code snippet:
 
 ```js
 describe("BitcoinPod Balance", function() {
