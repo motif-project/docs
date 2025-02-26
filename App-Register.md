@@ -2,7 +2,7 @@
 
 This guide contains the instructions to register a deployed application with Motif. 
 
-[Sample Registration Script](https://github.com/MotifFinance/motif-app-examples/blob/main/script/timelock/RegisterApp.s.sol)
+[Sample Registration Script](https://github.com/motif-project/motif-examples/blob/80c58b73cb1675560ebe4547c09f2bdc512f4efc/script/timelock/RegisterApp.s.sol)
 
 ## Setup
 
